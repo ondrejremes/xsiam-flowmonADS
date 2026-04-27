@@ -72,6 +72,8 @@ script:
   dockerimage: demisto/python3:3.10.14.100715
   isfetch: true
   runonce: false
+  isremotesyncin: true
+  isremotesyncout: true
   commands:
 
   - name: flowmon-ads-perspectives-get
@@ -133,6 +135,61 @@ script:
       description: NetFlow source (collector channel) that detected the anomaly.
       type: String
 
+  - name: flowmon-ads-event-close
+    description: Closes (or marks as false positive) a Flowmon ADS event. Used for manual closure and by the mirroring engine when a XSIAM alert is closed.
+    arguments:
+    - name: event_id
+      description: ID of the ADS event to close.
+      required: true
+    - name: status
+      description: "Target status for the event. Default: closed."
+      required: false
+      defaultValue: closed
+      auto: PREDEFINED
+      predefined:
+      - closed
+      - false_positive
+      - investigating
+    - name: comment
+      description: Optional comment to add to the event explaining the closure.
+      required: false
+    outputs: []
+  - name: get-remote-data
+    description: "Mirroring: pulls the latest state of a Flowmon ADS event into the XSIAM incident. Called automatically by the mirroring engine."
+    arguments:
+    - name: id
+      description: Remote ADS event ID.
+      required: true
+    - name: lastUpdate
+      description: Timestamp of the last synchronisation (ISO 8601).
+      required: true
+    outputs: []
+  - name: update-remote-system
+    description: "Mirroring: pushes XSIAM incident status changes (e.g. closure) back to Flowmon ADS. Called automatically when a XSIAM alert is closed."
+    arguments:
+    - name: data
+      description: Incident data as JSON.
+      required: false
+    - name: entries
+      description: Incident entries as JSON.
+      required: false
+    - name: incident_changed
+      description: Whether the incident has changed.
+      required: false
+    - name: remote_incident_id
+      description: Remote ADS event ID.
+      required: false
+    - name: status
+      description: XSIAM incident status code.
+      required: false
+    - name: close_reason
+      description: Reason for closing the incident.
+      required: false
+    outputs: []
+  - name: get-mapping-fields
+    description: "Mirroring: returns field mapping schema for Flowmon ADS events."
+    arguments: []
+    outputs: []
   - name: flowmon-ads-event-get
     description: Returns detailed information about a specific ADS event.
     arguments:
@@ -185,6 +242,8 @@ script:
     - contextPath: FlowmonADS.Event.Comments
       description: Analyst comments on the event.
       type: Unknown
+  isremotesyncin: true
+  isremotesyncout: true
 fromversion: 6.10.0
 tests:
 - No tests (auto formatted)

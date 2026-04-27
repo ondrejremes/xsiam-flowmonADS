@@ -9,9 +9,14 @@ from FlowmonADS import (
     flowmon_ads_perspectives_get_command,
     flowmon_ads_events_get_command,
     flowmon_ads_event_get_command,
+    flowmon_ads_event_close_command,
+    get_remote_data_command,
+    update_remote_system_command,
     fetch_incidents,
     test_module,
     _event_to_incident,
+    ADS_STATUS_CLOSED,
+    ADS_STATUS_FALSE_POSITIVE,
 )
 
 BASE_URL = 'https://flowmon.example.com'
@@ -177,3 +182,133 @@ def test_fetch_incidents_with_perspective_filter(mock_client):
     mock_client.get_events.assert_called_once()
     call_kwargs = mock_client.get_events.call_args
     assert call_kwargs.kwargs.get('perspective_id') == '1' or call_kwargs.args[2] == '1'
+
+
+def test_flowmon_ads_event_close_command(mock_client):
+    mock_client.close_event = MagicMock(return_value={})
+    result = flowmon_ads_event_close_command(mock_client, {'event_id': '4510401', 'status': 'closed'})
+    mock_client.close_event.assert_called_once_with('4510401', status='closed', comment=None)
+    assert '4510401' in result.readable_output
+    assert 'closed' in result.readable_output
+
+
+def test_flowmon_ads_event_close_with_comment(mock_client):
+    mock_client.close_event = MagicMock(return_value={})
+    flowmon_ads_event_close_command(
+        mock_client,
+        {'event_id': '4510401', 'status': 'false_positive', 'comment': 'Lab traffic, not a threat'}
+    )
+    mock_client.close_event.assert_called_once_with(
+        '4510401', status='false_positive', comment='Lab traffic, not a threat'
+    )
+
+
+def test_get_remote_data_open_event(mock_client):
+    open_event = dict(MOCK_EVENTS[0])
+    open_event['status'] = 'open'
+    mock_client.get_event = MagicMock(return_value=open_event)
+
+    args = {'id': '4510401', 'lastUpdate': '2024-01-15T00:00:00Z'}
+    response = get_remote_data_command(mock_client, args)
+
+    assert response.mirrored_object['ID'] == 4510401
+    assert len(response.entries) == 0
+
+
+def test_get_remote_data_closed_event_triggers_xsiam_close(mock_client):
+    closed_event = dict(MOCK_EVENTS[0])
+    closed_event['status'] = 'closed'
+    mock_client.get_event = MagicMock(return_value=closed_event)
+
+    args = {'id': '4510401', 'lastUpdate': '2024-01-15T00:00:00Z'}
+    response = get_remote_data_command(mock_client, args)
+
+    assert response.mirrored_object.get('closeReason') == 'Resolved'
+    assert len(response.entries) == 1
+    assert 'closed' in response.entries[0]['Contents'].lower()
+
+
+def test_get_remote_data_false_positive_event(mock_client):
+    fp_event = dict(MOCK_EVENTS[0])
+    fp_event['status'] = 'false_positive'
+    mock_client.get_event = MagicMock(return_value=fp_event)
+
+    args = {'id': '4510401', 'lastUpdate': '2024-01-15T00:00:00Z'}
+    response = get_remote_data_command(mock_client, args)
+
+    assert response.mirrored_object.get('closeReason') == 'False Positive'
+
+
+def test_update_remote_system_closes_event_on_xsiam_close(mock_client):
+    mock_client.close_event = MagicMock(return_value={})
+
+    args = {
+        'remote_incident_id': '4510401',
+        'incident_changed': True,
+        'status': 2,  # IncidentStatus.DONE
+        'close_reason': 'Resolved',
+        'data': json.dumps({'owner': 'analyst1', 'CustomFields': {'flowmonadseventid': '4510401'}}),
+        'entries': '[]',
+    }
+    result = update_remote_system_command(mock_client, args)
+
+    mock_client.close_event.assert_called_once()
+    call_args = mock_client.close_event.call_args
+    assert call_args.kwargs.get('status') == ADS_STATUS_CLOSED or call_args.args[1] == ADS_STATUS_CLOSED
+    assert result == '4510401'
+
+
+def test_update_remote_system_false_positive_reason(mock_client):
+    mock_client.close_event = MagicMock(return_value={})
+
+    args = {
+        'remote_incident_id': '4510402',
+        'incident_changed': True,
+        'status': 2,
+        'close_reason': 'False Positive',
+        'data': json.dumps({'owner': ''}),
+        'entries': '[]',
+    }
+    update_remote_system_command(mock_client, args)
+
+    call_args = mock_client.close_event.call_args
+    used_status = call_args.kwargs.get('status') or call_args.args[1]
+    assert used_status == ADS_STATUS_FALSE_POSITIVE
+
+
+def test_update_remote_system_skips_when_not_closed(mock_client):
+    mock_client.close_event = MagicMock()
+
+    args = {
+        'remote_incident_id': '4510401',
+        'incident_changed': True,
+        'status': 1,  # Active, not done
+        'close_reason': '',
+        'data': '{}',
+        'entries': '[]',
+    }
+    update_remote_system_command(mock_client, args)
+    mock_client.close_event.assert_not_called()
+
+
+def test_update_remote_system_skips_when_no_change(mock_client):
+    mock_client.close_event = MagicMock()
+
+    args = {
+        'remote_incident_id': '4510401',
+        'incident_changed': False,
+        'status': 2,
+        'close_reason': 'Resolved',
+        'data': '{}',
+        'entries': '[]',
+    }
+    update_remote_system_command(mock_client, args)
+    mock_client.close_event.assert_not_called()
+
+
+def test_fetch_incident_has_mirror_fields():
+    event = MOCK_EVENTS[0]
+    incident = _event_to_incident(event)
+    assert incident.get('dbotMirrorId') == '4510401'
+    assert incident.get('dbotMirrorDirection') == 'Both'
+    assert 'dbotMirrorInstance' in incident
