@@ -1,0 +1,9 @@
+{
+  "id": "incident_flowmonadssourceip",
+  "name": "Flowmon ADS Source IP",
+  "cliName": "flowmonadssourceip",
+  "type": "shortText",
+  "description": "Source IP address of the anomalous traffic detected by Flowmon ADS.",
+  "associatedTypes": ["Flowmon ADS Event"],
+  "fromVersion": "6.10.0"
+}

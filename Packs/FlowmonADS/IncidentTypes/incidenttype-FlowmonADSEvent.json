@@ -1,0 +1,12 @@
+{
+  "id": "Flowmon ADS Event",
+  "name": "Flowmon ADS Event",
+  "color": "#7DBBF5",
+  "hours": 0,
+  "minutes": 0,
+  "days": 0,
+  "weeks": 0,
+  "SLA": 0,
+  "playbookId": "",
+  "fromVersion": "6.10.0"
+}

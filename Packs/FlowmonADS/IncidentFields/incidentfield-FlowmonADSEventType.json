@@ -1,0 +1,9 @@
+{
+  "id": "incident_flowmonadseventtype",
+  "name": "Flowmon ADS Event Type",
+  "cliName": "flowmonadseventtype",
+  "type": "shortText",
+  "description": "Flowmon ADS event type (e.g. ANOMALY).",
+  "associatedTypes": ["Flowmon ADS Event"],
+  "fromVersion": "6.10.0"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "incident_flowmonadseventid",
+  "name": "Flowmon ADS Event ID",
+  "cliName": "flowmonadseventid",
+  "type": "shortText",
+  "description": "Flowmon ADS event identifier.",
+  "associatedTypes": ["Flowmon ADS Event"],
+  "fromVersion": "6.10.0"
+}

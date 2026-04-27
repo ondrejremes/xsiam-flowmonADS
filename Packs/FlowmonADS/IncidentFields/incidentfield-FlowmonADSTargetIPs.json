@@ -1,0 +1,9 @@
+{
+  "id": "incident_flowmonadstargetips",
+  "name": "Flowmon ADS Target IPs",
+  "cliName": "flowmonadstargetips",
+  "type": "shortText",
+  "description": "Comma-separated list of target IP addresses in the Flowmon ADS event.",
+  "associatedTypes": ["Flowmon ADS Event"],
+  "fromVersion": "6.10.0"
+}

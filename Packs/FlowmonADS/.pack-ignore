@@ -1,0 +1,5 @@
+[file:README.md]
+ignore_errors=IN126
+
+[file:Integrations/FlowmonADS/FlowmonADS.yml]
+ignore_errors=BA108,BA109

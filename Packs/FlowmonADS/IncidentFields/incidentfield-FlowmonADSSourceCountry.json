@@ -1,0 +1,9 @@
+{
+  "id": "incident_flowmonadsourcecountry",
+  "name": "Flowmon ADS Source Country",
+  "cliName": "flowmonadsourcecountry",
+  "type": "shortText",
+  "description": "Country of the source IP address in the Flowmon ADS event.",
+  "associatedTypes": ["Flowmon ADS Event"],
+  "fromVersion": "6.10.0"
+}

@@ -1,0 +1,190 @@
+commonfields:
+  id: FlowmonADS
+  version: -1
+name: FlowmonADS
+display: Flowmon ADS
+category: Network Security
+description: Integrates with Progress Flowmon Anomaly Detection System (ADS) REST API to ingest network anomaly events as XSIAM alerts and enrich investigations with flow-based threat intelligence.
+sectionorder:
+- Connect
+- Collect
+configuration:
+- display: Flowmon URL
+  name: url
+  type: 0
+  required: true
+  section: Connect
+  additionalinfo: "Base URL of your Flowmon appliance, e.g. https://flowmon.example.com"
+- display: Username
+  displaypassword: Password
+  name: credentials
+  type: 9
+  required: true
+  section: Connect
+  additionalinfo: Flowmon user credentials used to obtain an OAuth2 bearer token.
+- display: Trust any certificate (not secure)
+  name: insecure
+  type: 8
+  required: false
+  advanced: true
+  section: Connect
+- display: Use system proxy settings
+  name: proxy
+  type: 8
+  required: false
+  advanced: true
+  section: Connect
+- display: Fetch incidents
+  name: isFetch
+  type: 8
+  required: false
+  section: Collect
+- display: Incident type
+  name: incidentType
+  type: 13
+  required: false
+  section: Collect
+- display: Maximum number of events per fetch
+  name: max_fetch
+  defaultvalue: "50"
+  type: 0
+  required: false
+  advanced: true
+  section: Collect
+  additionalinfo: "Maximum number of ADS events to fetch per run (1–200). Default: 50."
+- display: First fetch time
+  name: first_fetch
+  defaultvalue: 1 hour
+  type: 0
+  required: false
+  section: Collect
+  additionalinfo: "How far back to fetch on first run. Examples: 1 hour, 2 days, 1 week."
+- display: Perspective ID (optional)
+  name: perspective_id
+  type: 0
+  required: false
+  section: Collect
+  additionalinfo: "Limit fetched events to a specific Flowmon ADS perspective ID. Leave empty to fetch all perspectives."
+script:
+  script: '-'
+  type: python
+  subtype: python3
+  dockerimage: demisto/python3:3.10.14.100715
+  isfetch: true
+  runonce: false
+  commands:
+
+  - name: flowmon-ads-perspectives-get
+    description: Returns the list of configured ADS detection perspectives.
+    arguments: []
+    outputs:
+    - contextPath: FlowmonADS.Perspective.ID
+      description: Perspective identifier.
+      type: Number
+    - contextPath: FlowmonADS.Perspective.Name
+      description: Perspective name.
+      type: String
+
+  - name: flowmon-ads-events-get
+    description: Returns ADS anomaly events for the specified time range.
+    arguments:
+    - name: from_time
+      description: "Start of the time range. Format: YYYY-MM-DD HH:MM. Default: 1 hour ago."
+      required: false
+    - name: to_time
+      description: "End of the time range. Format: YYYY-MM-DD HH:MM. Default: now."
+      required: false
+    - name: perspective_id
+      description: Filter events by perspective ID. Leave empty for all perspectives.
+      required: false
+    - name: limit
+      description: Maximum number of events to return (1–200). Default is 50.
+      required: false
+      defaultValue: "50"
+    outputs:
+    - contextPath: FlowmonADS.Event.ID
+      description: Event identifier.
+      type: Number
+    - contextPath: FlowmonADS.Event.Type
+      description: Event type (e.g. ANOMALY).
+      type: String
+    - contextPath: FlowmonADS.Event.Time
+      description: Event detection time.
+      type: Date
+    - contextPath: FlowmonADS.Event.Detail
+      description: Human-readable description of the anomaly.
+      type: String
+    - contextPath: FlowmonADS.Event.Priority
+      description: "Event priority (1=lowest, 5=highest)."
+      type: Number
+    - contextPath: FlowmonADS.Event.Interest
+      description: Interest score (0–1) representing how unusual the event is.
+      type: Number
+    - contextPath: FlowmonADS.Event.SourceIP
+      description: Source IP address of the anomalous traffic.
+      type: String
+    - contextPath: FlowmonADS.Event.TargetIPs
+      description: List of target IP addresses.
+      type: Unknown
+    - contextPath: FlowmonADS.Event.Perspectives
+      description: List of perspective names the event belongs to.
+      type: Unknown
+    - contextPath: FlowmonADS.Event.NFSource
+      description: NetFlow source (collector channel) that detected the anomaly.
+      type: String
+
+  - name: flowmon-ads-event-get
+    description: Returns detailed information about a specific ADS event.
+    arguments:
+    - name: event_id
+      description: ID of the ADS event.
+      required: true
+    outputs:
+    - contextPath: FlowmonADS.Event.ID
+      description: Event identifier.
+      type: Number
+    - contextPath: FlowmonADS.Event.Type
+      description: Event type.
+      type: String
+    - contextPath: FlowmonADS.Event.Time
+      description: Event detection time.
+      type: Date
+    - contextPath: FlowmonADS.Event.FlowStamp
+      description: Timestamp of the first flow that triggered the event.
+      type: Date
+    - contextPath: FlowmonADS.Event.Detail
+      description: Human-readable description of the anomaly.
+      type: String
+    - contextPath: FlowmonADS.Event.Priority
+      description: "Event priority (1=lowest, 5=highest)."
+      type: Number
+    - contextPath: FlowmonADS.Event.Interest
+      description: Interest score (0–1).
+      type: Number
+    - contextPath: FlowmonADS.Event.SourceIP
+      description: Source IP address.
+      type: String
+    - contextPath: FlowmonADS.Event.SourceCountry
+      description: Country of the source IP.
+      type: String
+    - contextPath: FlowmonADS.Event.SourceBlacklisted
+      description: Whether the source IP is blacklisted (1=yes, 0=no).
+      type: Number
+    - contextPath: FlowmonADS.Event.TargetIPs
+      description: List of target IP addresses.
+      type: Unknown
+    - contextPath: FlowmonADS.Event.Perspectives
+      description: Perspective names this event belongs to.
+      type: Unknown
+    - contextPath: FlowmonADS.Event.NFSource
+      description: NetFlow source name.
+      type: String
+    - contextPath: FlowmonADS.Event.Method
+      description: Detection method/model code that triggered the event.
+      type: String
+    - contextPath: FlowmonADS.Event.Comments
+      description: Analyst comments on the event.
+      type: Unknown
+fromversion: 6.10.0
+tests:
+- No tests (auto formatted)

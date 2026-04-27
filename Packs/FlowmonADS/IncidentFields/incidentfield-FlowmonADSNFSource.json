@@ -1,0 +1,9 @@
+{
+  "id": "incident_flowmonadsnfsource",
+  "name": "Flowmon ADS NetFlow Source",
+  "cliName": "flowmonadsnfsource",
+  "type": "shortText",
+  "description": "NetFlow source (collector/channel) that detected the anomaly.",
+  "associatedTypes": ["Flowmon ADS Event"],
+  "fromVersion": "6.10.0"
+}
