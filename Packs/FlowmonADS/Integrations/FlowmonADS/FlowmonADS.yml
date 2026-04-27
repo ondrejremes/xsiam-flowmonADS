@@ -242,8 +242,6 @@ script:
     - contextPath: FlowmonADS.Event.Comments
       description: Analyst comments on the event.
       type: Unknown
-  isremotesyncin: true
-  isremotesyncout: true
 fromversion: 6.10.0
 tests:
 - No tests (auto formatted)
