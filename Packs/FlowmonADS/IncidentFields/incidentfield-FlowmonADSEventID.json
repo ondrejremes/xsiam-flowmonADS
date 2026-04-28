@@ -4,6 +4,9 @@
   "cliName": "flowmonadseventid",
   "type": "shortText",
   "description": "Flowmon ADS event identifier.",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }

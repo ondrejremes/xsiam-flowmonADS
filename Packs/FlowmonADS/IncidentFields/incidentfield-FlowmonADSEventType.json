@@ -4,6 +4,9 @@
   "cliName": "flowmonadseventtype",
   "type": "shortText",
   "description": "Flowmon ADS event type (e.g. ANOMALY).",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }

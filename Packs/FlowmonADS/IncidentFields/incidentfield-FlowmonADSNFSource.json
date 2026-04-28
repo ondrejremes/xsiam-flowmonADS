@@ -4,6 +4,9 @@
   "cliName": "flowmonadsnfsource",
   "type": "shortText",
   "description": "NetFlow source (collector/channel) that detected the anomaly.",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }

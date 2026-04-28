@@ -4,6 +4,9 @@
   "cliName": "flowmonadspriority",
   "type": "number",
   "description": "Flowmon ADS event priority (1=lowest, 5=highest).",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }

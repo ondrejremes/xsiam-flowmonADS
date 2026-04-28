@@ -3,7 +3,10 @@
   "name": "Flowmon ADS Interest Score",
   "cliName": "flowmonadsinterest",
   "type": "number",
-  "description": "Flowmon ADS interest score (0–1) representing anomaly unusualness.",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "description": "Flowmon ADS interest score (0\u20131) representing anomaly unusualness.",
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }

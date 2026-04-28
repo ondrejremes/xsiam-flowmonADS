@@ -4,6 +4,9 @@
   "cliName": "flowmonadsperspectives",
   "type": "shortText",
   "description": "Comma-separated list of ADS perspective names this event belongs to.",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }

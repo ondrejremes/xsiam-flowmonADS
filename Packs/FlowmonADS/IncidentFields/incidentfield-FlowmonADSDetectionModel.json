@@ -4,6 +4,9 @@
   "cliName": "flowmonadsdetectionmodel",
   "type": "shortText",
   "description": "Flowmon ADS detection method/model code that triggered the event.",
-  "associatedTypes": ["Flowmon ADS Event"],
-  "fromVersion": "6.10.0"
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
 }
