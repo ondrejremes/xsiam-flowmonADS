@@ -394,7 +394,7 @@ def main():
     args = demisto.args()
     command = demisto.command()
 
-    base_url = params.get('url', '').rstrip('/')
+    base_url = params.get('server_url', '').rstrip('/')
     credentials = params.get('credentials', {})
     username = credentials.get('identifier', '')
     password = credentials.get('password', '')
