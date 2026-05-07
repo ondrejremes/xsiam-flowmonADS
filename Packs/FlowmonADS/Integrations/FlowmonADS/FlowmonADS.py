@@ -360,7 +360,7 @@ def fetch_incidents(client: FlowmonClient, last_run: dict, params: dict) -> tupl
     now = datetime.utcnow()
     last_fetch_str = last_run.get('last_fetch')
     if last_fetch_str:
-        last_fetch = datetime.strptime(last_fetch_str, '%Y-%m-%d %H:%M:%S')
+        last_fetch = datetime.strptime(last_fetch_str, '%Y-%m-%d %H:%M')
     else:
         first_fetch_str = params.get('first_fetch') or '1 hour'
         last_fetch = dateparser.parse(f'{first_fetch_str} UTC',
