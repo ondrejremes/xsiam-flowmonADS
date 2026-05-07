@@ -6,8 +6,9 @@ OAUTH_CLIENT_ID = 'invea-tech'
 DEFAULT_FETCH_LIMIT = 50
 MAX_FETCH_LIMIT = 200
 
-# ADS event priority → XSIAM severity mapping (priority 1=lowest, 5=highest)
+# ADS event priority → XSIAM severity mapping (priority 1=lowest, 5=highest; 0=unclassified)
 PRIORITY_TO_SEVERITY = {
+    0: IncidentSeverity.UNKNOWN,
     1: IncidentSeverity.LOW,
     2: IncidentSeverity.LOW,
     3: IncidentSeverity.MEDIUM,
@@ -126,9 +127,15 @@ def _parse_flowmon_time(time_str: str) -> str:
     return time_str.replace(' ', 'T', 1) + 'Z'
 
 
+def _resolve_priority(event: dict) -> int:
+    """Return effective priority: max across perspectives, or top-level priority as fallback."""
+    persp_max = max((p.get('priority', 0) for p in event.get('perspectives', [])), default=0)
+    return persp_max if persp_max > 0 else event.get('priority', 0)
+
+
 def _event_to_incident(event: dict) -> dict:
-    priority = event.get('priority', 3)
-    severity = PRIORITY_TO_SEVERITY.get(priority, IncidentSeverity.MEDIUM)
+    priority = _resolve_priority(event)
+    severity = PRIORITY_TO_SEVERITY.get(priority, IncidentSeverity.UNKNOWN)
     source = event.get('source', {})
     targets = event.get('targets', [])
     perspectives = event.get('perspectives', [])
@@ -137,9 +144,11 @@ def _event_to_incident(event: dict) -> dict:
 
     return {
         'name': name,
+        'details': event.get('detail', ''),
         'occurred': _parse_flowmon_time(event.get('time', '')),
         'rawJSON': json.dumps(event),
         'severity': severity,
+        'category': 'Network Security',
         'type': 'Flowmon ADS Event',
         'dbotMirrorId': str(event.get('id', '')),
         'dbotMirrorInstance': demisto.integrationInstance(),

@@ -15,6 +15,7 @@ from FlowmonADS import (
     fetch_incidents,
     test_module,
     _event_to_incident,
+    _resolve_priority,
     ADS_STATUS_CLOSED,
     ADS_STATUS_FALSE_POSITIVE,
 )
@@ -135,20 +136,45 @@ def test_flowmon_ads_event_get_command_not_found(mock_client):
     assert 'not found' in result.readable_output
 
 
+def test_resolve_priority_uses_perspective_max():
+    event = {'priority': 0, 'perspectives': [{'priority': 3}, {'priority': 5}]}
+    assert _resolve_priority(event) == 5
+
+
+def test_resolve_priority_falls_back_to_top_level():
+    event = {'priority': 4, 'perspectives': []}
+    assert _resolve_priority(event) == 4
+
+
+def test_resolve_priority_zero_when_unclassified():
+    event = {'priority': 0, 'perspectives': [{'priority': 0}]}
+    assert _resolve_priority(event) == 0
+
+
 def test_event_to_incident_severity_mapping():
-    for priority, expected_severity in [(1, 1), (2, 1), (3, 2), (4, 3), (5, 4)]:
-        event = dict(MOCK_EVENTS[0])
-        event['priority'] = priority
+    # Events with no perspectives — uses top-level priority
+    for priority, expected_severity in [(0, 0), (1, 1), (2, 1), (3, 2), (4, 3), (5, 4)]:
+        event = {**MOCK_EVENTS[0], 'priority': priority, 'perspectives': []}
         incident = _event_to_incident(event)
         assert incident['severity'] == expected_severity, \
             f'Priority {priority} should map to severity {expected_severity}'
+
+
+def test_event_to_incident_severity_from_perspective():
+    # Top-level priority=0, but perspective has priority=4 → HIGH (3)
+    event = {**MOCK_EVENTS[0], 'priority': 0,
+             'perspectives': [{'id': 1, 'name': 'Security issues', 'priority': 4}]}
+    incident = _event_to_incident(event)
+    assert incident['severity'] == 3  # HIGH
 
 
 def test_event_to_incident_structure():
     event = MOCK_EVENTS[0]
     incident = _event_to_incident(event)
     assert incident['name'] == event['detail']
+    assert incident['details'] == event['detail']
     assert incident['occurred'] == event['time'].replace(' ', 'T', 1) + 'Z'
+    assert incident['category'] == 'Network Security'
     custom = incident['CustomFields']
     assert custom['flowmonadseventid'] == '4510401'
     assert custom['flowmonadssourceip'] == '192.168.1.100'
