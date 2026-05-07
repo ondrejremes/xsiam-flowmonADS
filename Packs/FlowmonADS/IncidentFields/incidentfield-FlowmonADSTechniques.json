@@ -1,0 +1,12 @@
+{
+  "id": "incident_flowmonadstechniques",
+  "name": "Flowmon ADS MITRE Techniques",
+  "cliName": "flowmonadstechniques",
+  "type": "shortText",
+  "description": "MITRE ATT&CK technique IDs associated with the Flowmon ADS event (e.g. T1046, T1595).",
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
+}

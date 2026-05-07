@@ -6,6 +6,9 @@ OAUTH_CLIENT_ID = 'invea-tech'
 DEFAULT_FETCH_LIMIT = 50
 MAX_FETCH_LIMIT = 200
 
+# Fields stripped from rawJSON (internal Flowmon noise; data captured in custom fields instead)
+_RAW_JSON_EXCLUDE = frozenset({'appmapSummary', 'methodInstance', '_collector_name'})
+
 # ADS event priority → XSIAM severity mapping (priority 1=lowest, 5=highest; 0=unclassified)
 PRIORITY_TO_SEVERITY = {
     0: IncidentSeverity.UNKNOWN,
@@ -141,30 +144,39 @@ def _event_to_incident(event: dict) -> dict:
     perspectives = event.get('perspectives', [])
     nf_source = event.get('nfSource', {})
     name = event.get('detail') or f"Flowmon ADS anomaly #{event.get('id')}"
+    techniques = event.get('techniques', [])
+    techniques_str = ', '.join(techniques) if isinstance(techniques, list) else str(techniques or '')
 
+    custom_fields: dict = {
+        'flowmonadseventid': str(event.get('id', '')),
+        'flowmonadseventtype': event.get('type', ''),
+        'flowmonadsinterest': event.get('interest'),
+        'flowmonadspriority': priority,
+        'flowmonadssourceip': source.get('ip', ''),
+        'flowmonadssourcehostname': source.get('resolved', ''),
+        'flowmonadsourcecountry': source.get('country', ''),
+        'flowmonadstargetips': ', '.join(t.get('ip', '') for t in targets if t.get('ip')),
+        'flowmonadsdetectionmodel': event.get('method', ''),
+        'flowmonadsnfsource': nf_source.get('name', ''),
+        'flowmonadsperspectives': ', '.join(p.get('name', '') for p in perspectives),
+        'flowmonadstechniques': techniques_str,
+    }
+    if techniques:
+        custom_fields['mitreattcktechnique'] = techniques
+
+    raw = {k: v for k, v in event.items() if k not in _RAW_JSON_EXCLUDE}
     return {
         'name': name,
         'details': event.get('detail', ''),
         'occurred': _parse_flowmon_time(event.get('time', '')),
-        'rawJSON': json.dumps(event),
+        'rawJSON': json.dumps(raw),
         'severity': severity,
         'category': 'Network Security',
         'type': 'Flowmon ADS Event',
         'dbotMirrorId': str(event.get('id', '')),
         'dbotMirrorInstance': demisto.integrationInstance(),
         'dbotMirrorDirection': 'Both',
-        'CustomFields': {
-            'flowmonadseventid': str(event.get('id', '')),
-            'flowmonadseventtype': event.get('type', ''),
-            'flowmonadsinterest': event.get('interest'),
-            'flowmonadspriority': priority,
-            'flowmonadssourceip': source.get('ip', ''),
-            'flowmonadsourcecountry': source.get('country', ''),
-            'flowmonadstargetips': ', '.join(t.get('ip', '') for t in targets if t.get('ip')),
-            'flowmonadsdetectionmodel': event.get('method', ''),
-            'flowmonadsnfsource': nf_source.get('name', ''),
-            'flowmonadsperspectives': ', '.join(p.get('name', '') for p in perspectives),
-        },
+        'CustomFields': custom_fields,
     }
 
 
@@ -179,12 +191,14 @@ def _build_event_output(event: dict) -> dict:
         'Interest': event.get('interest'),
         'Status': event.get('status'),
         'SourceIP': (event.get('source') or {}).get('ip'),
+        'SourceHostname': (event.get('source') or {}).get('resolved'),
         'SourceCountry': (event.get('source') or {}).get('country'),
         'SourceBlacklisted': (event.get('source') or {}).get('blacklisted'),
         'TargetIPs': [t.get('ip') for t in (event.get('targets') or []) if t.get('ip')],
         'Perspectives': [p.get('name') for p in (event.get('perspectives') or [])],
         'NFSource': (event.get('nfSource') or {}).get('name'),
         'Method': event.get('method'),
+        'Techniques': event.get('techniques', []),
         'Comments': event.get('comments', []),
     }
 
@@ -350,11 +364,13 @@ def get_mapping_fields_command() -> GetMappingFieldsResponse:
         ('flowmonadspriority', 'Priority (1–5)'),
         ('flowmonadsinterest', 'Interest score (0–1)'),
         ('flowmonadssourceip', 'Source IP address'),
+        ('flowmonadssourcehostname', 'Resolved hostname of the source IP'),
         ('flowmonadsourcecountry', 'Source country'),
         ('flowmonadstargetips', 'Target IP addresses'),
         ('flowmonadsdetectionmodel', 'Detection model code'),
         ('flowmonadsnfsource', 'NetFlow source name'),
         ('flowmonadsperspectives', 'Perspective names'),
+        ('flowmonadstechniques', 'MITRE ATT&CK technique IDs'),
     ]:
         mapping.add_field(field, desc)
     return GetMappingFieldsResponse([mapping])

@@ -125,6 +125,9 @@ script:
     - contextPath: FlowmonADS.Event.SourceIP
       description: Source IP address of the anomalous traffic.
       type: String
+    - contextPath: FlowmonADS.Event.SourceHostname
+      description: Resolved hostname of the source IP address.
+      type: String
     - contextPath: FlowmonADS.Event.TargetIPs
       description: List of target IP addresses.
       type: Unknown
@@ -134,6 +137,9 @@ script:
     - contextPath: FlowmonADS.Event.NFSource
       description: NetFlow source (collector channel) that detected the anomaly.
       type: String
+    - contextPath: FlowmonADS.Event.Techniques
+      description: MITRE ATT&CK technique IDs associated with the event.
+      type: Unknown
 
   - name: flowmon-ads-event-close
     description: Closes (or marks as false positive) a Flowmon ADS event. Used for manual closure and by the mirroring engine when a XSIAM alert is closed.

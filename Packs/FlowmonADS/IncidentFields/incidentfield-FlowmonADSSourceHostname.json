@@ -1,0 +1,12 @@
+{
+  "id": "incident_flowmonadssourcehostname",
+  "name": "Flowmon ADS Source Hostname",
+  "cliName": "flowmonadssourcehostname",
+  "type": "shortText",
+  "description": "Resolved hostname of the source IP address in the Flowmon ADS event.",
+  "associatedTypes": [
+    "Flowmon ADS Event"
+  ],
+  "fromVersion": "6.10.0",
+  "associatedToAll": false
+}

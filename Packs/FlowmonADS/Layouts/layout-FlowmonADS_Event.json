@@ -1,0 +1,122 @@
+{
+  "detailsV2": {
+    "tabs": [
+      {
+        "id": "summary",
+        "name": "Summary",
+        "sections": [
+          {
+            "name": "Network Context",
+            "type": "custom",
+            "items": [
+              {
+                "fieldId": "incident_flowmonadssourceip",
+                "isVisible": true,
+                "id": "flowmonadssourceip"
+              },
+              {
+                "fieldId": "incident_flowmonadssourcehostname",
+                "isVisible": true,
+                "id": "flowmonadssourcehostname"
+              },
+              {
+                "fieldId": "incident_flowmonadsourcecountry",
+                "isVisible": true,
+                "id": "flowmonadsourcecountry"
+              },
+              {
+                "fieldId": "incident_flowmonadstargetips",
+                "isVisible": true,
+                "id": "flowmonadstargetips"
+              },
+              {
+                "fieldId": "incident_flowmonadsnfsource",
+                "isVisible": true,
+                "id": "flowmonadsnfsource"
+              }
+            ]
+          },
+          {
+            "name": "Detection Details",
+            "type": "custom",
+            "items": [
+              {
+                "fieldId": "incident_flowmonadseventid",
+                "isVisible": true,
+                "id": "flowmonadseventid"
+              },
+              {
+                "fieldId": "incident_flowmonadseventtype",
+                "isVisible": true,
+                "id": "flowmonadseventtype"
+              },
+              {
+                "fieldId": "incident_flowmonadsdetectionmodel",
+                "isVisible": true,
+                "id": "flowmonadsdetectionmodel"
+              },
+              {
+                "fieldId": "incident_flowmonadspriority",
+                "isVisible": true,
+                "id": "flowmonadspriority"
+              },
+              {
+                "fieldId": "incident_flowmonadsinterest",
+                "isVisible": true,
+                "id": "flowmonadsinterest"
+              },
+              {
+                "fieldId": "incident_flowmonadsperspectives",
+                "isVisible": true,
+                "id": "flowmonadsperspectives"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "mitre",
+        "name": "MITRE ATT&CK",
+        "sections": [
+          {
+            "name": "Techniques",
+            "type": "custom",
+            "items": [
+              {
+                "fieldId": "incident_flowmonadstechniques",
+                "isVisible": true,
+                "id": "flowmonadstechniques"
+              },
+              {
+                "fieldId": "incident_mitreattcktechnique",
+                "isVisible": true,
+                "id": "mitreattcktechnique"
+              },
+              {
+                "fieldId": "incident_mitreattcktactic",
+                "isVisible": true,
+                "id": "mitreattcktactic"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "warroom",
+        "name": "War Room",
+        "sections": [
+          {
+            "name": "War Room",
+            "type": "warRoom"
+          }
+        ]
+      }
+    ]
+  },
+  "group": "incident",
+  "id": "Flowmon ADS Event",
+  "name": "Flowmon ADS Event",
+  "typeId": "Flowmon ADS Event",
+  "version": -1,
+  "fromVersion": "6.10.0"
+}
