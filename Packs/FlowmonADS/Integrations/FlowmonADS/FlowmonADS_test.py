@@ -148,7 +148,7 @@ def test_event_to_incident_structure():
     event = MOCK_EVENTS[0]
     incident = _event_to_incident(event)
     assert incident['name'] == event['detail']
-    assert incident['occurred'] == event['time']
+    assert incident['occurred'] == event['time'].replace(' ', 'T', 1) + 'Z'
     custom = incident['CustomFields']
     assert custom['flowmonadseventid'] == '4510401'
     assert custom['flowmonadssourceip'] == '192.168.1.100'

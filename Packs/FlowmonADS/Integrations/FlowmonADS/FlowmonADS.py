@@ -119,6 +119,13 @@ def _parse_event_time(event: dict) -> datetime:
         return datetime.utcnow()
 
 
+def _parse_flowmon_time(time_str: str) -> str:
+    """Convert Flowmon time format 'YYYY-MM-DD HH:MM:SS' to RFC3339 'YYYY-MM-DDTHH:MM:SSZ'."""
+    if not time_str:
+        return ''
+    return time_str.replace(' ', 'T', 1) + 'Z'
+
+
 def _event_to_incident(event: dict) -> dict:
     priority = event.get('priority', 3)
     severity = PRIORITY_TO_SEVERITY.get(priority, IncidentSeverity.MEDIUM)
@@ -130,7 +137,7 @@ def _event_to_incident(event: dict) -> dict:
 
     return {
         'name': name,
-        'occurred': event.get('time', ''),
+        'occurred': _parse_flowmon_time(event.get('time', '')),
         'rawJSON': json.dumps(event),
         'severity': severity,
         'type': 'Flowmon ADS Event',
