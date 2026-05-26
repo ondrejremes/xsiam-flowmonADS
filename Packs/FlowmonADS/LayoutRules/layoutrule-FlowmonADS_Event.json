@@ -1,0 +1,19 @@
+{
+  "rule_id": "FlowmonADS_Event_Layout_Rule",
+  "rule_name": "Flowmon ADS Event Layout Rule",
+  "layout_id": "Flowmon ADS Event",
+  "description": "Apply the Flowmon ADS Event layout to all alerts of type Flowmon ADS Event.",
+  "fromVersion": "6.10.0",
+  "marketplaces": ["xsoar"],
+  "alerts_filter": {
+    "filter": {
+      "AND": [
+        {
+          "SEARCH_FIELD": "type",
+          "SEARCH_TYPE": "EXACT_MATCH",
+          "SEARCH_VALUE": "Flowmon ADS Event"
+        }
+      ]
+    }
+  }
+}
