@@ -59,12 +59,12 @@ configuration:
   required: false
   section: Collect
   additionalinfo: "How far back to fetch on first run. Examples: 1 hour, 2 days, 1 week."
-- display: Perspective ID (optional)
-  name: perspective_id
+- display: Perspective Name (optional)
+  name: perspective_name
   type: 0
   required: false
   section: Collect
-  additionalinfo: "Limit fetched events to a specific Flowmon ADS perspective ID. Leave empty to fetch all perspectives."
+  additionalinfo: "Limit fetched events to a specific Flowmon ADS perspective by name (e.g. Security issues). Leave empty to fetch all perspectives."
 script:
   script: '-'
   type: python

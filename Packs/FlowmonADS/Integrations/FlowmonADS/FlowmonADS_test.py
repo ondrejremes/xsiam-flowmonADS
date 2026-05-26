@@ -201,13 +201,38 @@ def test_fetch_incidents_deduplication(mock_client):
     assert len(incidents) == 0
 
 
+def test_get_events_client_side_perspective_id_filter(mock_client):
+    """Events whose perspectives array doesn't contain the requested ID must be excluded."""
+    mixed_events = [
+        {**MOCK_EVENTS[0], 'perspectives': [{'id': 1, 'name': 'Security issues', 'priority': 4}]},
+        {**MOCK_EVENTS[1], 'perspectives': [{'id': 2, 'name': 'Operational issues', 'priority': 3}]},
+    ]
+    mock_client._get = MagicMock(return_value=mixed_events)
+    results = mock_client.get_events('2024-01-15 10:00', '2024-01-15 11:00', perspective_id='1')
+    assert len(results) == 1
+    assert results[0]['id'] == MOCK_EVENTS[0]['id']
+
+
+def test_get_events_client_side_perspective_name_filter(mock_client):
+    """Events whose perspectives array doesn't contain the requested name must be excluded."""
+    mixed_events = [
+        {**MOCK_EVENTS[0], 'perspectives': [{'id': 1, 'name': 'Security issues', 'priority': 4}]},
+        {**MOCK_EVENTS[1], 'perspectives': [{'id': 2, 'name': 'Operational issues', 'priority': 3}]},
+    ]
+    mock_client._get = MagicMock(return_value=mixed_events)
+    results = mock_client.get_events('2024-01-15 10:00', '2024-01-15 11:00',
+                                     perspective_name='Security issues')
+    assert len(results) == 1
+    assert results[0]['id'] == MOCK_EVENTS[0]['id']
+
+
 def test_fetch_incidents_with_perspective_filter(mock_client):
     mock_client.get_events = MagicMock(return_value=[MOCK_EVENTS[0]])
-    params = {'max_fetch': '50', 'perspective_id': '1'}
+    params = {'max_fetch': '50', 'perspective_name': 'Security issues'}
     _, incidents = fetch_incidents(mock_client, {}, params)
     mock_client.get_events.assert_called_once()
     call_kwargs = mock_client.get_events.call_args
-    assert call_kwargs.kwargs.get('perspective_id') == '1' or call_kwargs.args[2] == '1'
+    assert call_kwargs.kwargs.get('perspective_name') == 'Security issues'
 
 
 def test_flowmon_ads_event_close_command(mock_client):

@@ -73,6 +73,7 @@ class FlowmonClient(BaseClient):
         return self._get('/rest/ads/perspectives') or []
 
     def get_events(self, from_time: str, to_time: str, perspective_id: str | None = None,
+                   perspective_name: str | None = None,
                    limit: int = DEFAULT_FETCH_LIMIT) -> list:
         search: dict = {'from': from_time, 'to': to_time}
         if perspective_id:
@@ -80,6 +81,14 @@ class FlowmonClient(BaseClient):
         params = {'search': json.dumps(search)}
         result = self._get('/rest/ads/events', params=params)
         events = result if isinstance(result, list) else []
+        if perspective_id:
+            pid = str(perspective_id)
+            events = [e for e in events
+                      if any(str(p.get('id', '')) == pid for p in e.get('perspectives', []))]
+        if perspective_name:
+            pname = perspective_name.strip()
+            events = [e for e in events
+                      if any(p.get('name', '') == pname for p in e.get('perspectives', []))]
         return events[:limit]
 
     def get_event(self, event_id: str | int) -> dict:
@@ -380,7 +389,7 @@ def get_mapping_fields_command() -> GetMappingFieldsResponse:
 
 def fetch_incidents(client: FlowmonClient, last_run: dict, params: dict) -> tuple[dict, list]:
     fetch_limit = min(arg_to_number(params.get('max_fetch')) or DEFAULT_FETCH_LIMIT, MAX_FETCH_LIMIT)
-    perspective_id = params.get('perspective_id') or None
+    perspective_name = params.get('perspective_name') or None
 
     now = datetime.utcnow()
     last_fetch_str = last_run.get('last_fetch')
@@ -395,7 +404,7 @@ def fetch_incidents(client: FlowmonClient, last_run: dict, params: dict) -> tupl
     to_time = _format_datetime(now)
 
     events = client.get_events(from_time=from_time, to_time=to_time,
-                               perspective_id=perspective_id, limit=fetch_limit)
+                               perspective_name=perspective_name, limit=fetch_limit)
 
     last_ids: set = set(last_run.get('last_ids', []))
     incidents = []
