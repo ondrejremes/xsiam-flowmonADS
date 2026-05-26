@@ -174,6 +174,8 @@ def _event_to_incident(event: dict) -> dict:
         custom_fields['mitreattcktechnique'] = techniques
 
     raw = {k: v for k, v in event.items() if k not in _RAW_JSON_EXCLUDE}
+    if 'perspectives' in raw:
+        raw['perspectives'] = [p.get('name', '') for p in raw['perspectives']]
     return {
         'name': name,
         'details': event.get('detail', ''),
