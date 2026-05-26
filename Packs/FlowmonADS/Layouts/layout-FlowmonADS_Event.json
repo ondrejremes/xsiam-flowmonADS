@@ -12,27 +12,44 @@
               {
                 "fieldId": "incident_flowmonadssourceip",
                 "isVisible": true,
-                "id": "flowmonadssourceip"
+                "id": "flowmonadssourceip",
+                "w": 1,
+                "h": 1
               },
               {
                 "fieldId": "incident_flowmonadssourcehostname",
                 "isVisible": true,
-                "id": "flowmonadssourcehostname"
+                "id": "flowmonadssourcehostname",
+                "w": 1,
+                "h": 1
               },
               {
                 "fieldId": "incident_flowmonadsourcecountry",
                 "isVisible": true,
-                "id": "flowmonadsourcecountry"
+                "id": "flowmonadsourcecountry",
+                "w": 1,
+                "h": 1
               },
               {
                 "fieldId": "incident_flowmonadstargetips",
                 "isVisible": true,
-                "id": "flowmonadstargetips"
+                "id": "flowmonadstargetips",
+                "w": 1,
+                "h": 1
               },
               {
                 "fieldId": "incident_flowmonadsnfsource",
                 "isVisible": true,
-                "id": "flowmonadsnfsource"
+                "id": "flowmonadsnfsource",
+                "w": 1,
+                "h": 1
+              },
+              {
+                "fieldId": "incident_flowmonadsperspectives",
+                "isVisible": true,
+                "id": "flowmonadsperspectives",
+                "w": 1,
+                "h": 1
               }
             ]
           },
@@ -41,34 +58,46 @@
             "type": "custom",
             "items": [
               {
-                "fieldId": "incident_flowmonadseventid",
-                "isVisible": true,
-                "id": "flowmonadseventid"
-              },
-              {
-                "fieldId": "incident_flowmonadseventtype",
-                "isVisible": true,
-                "id": "flowmonadseventtype"
-              },
-              {
-                "fieldId": "incident_flowmonadsdetectionmodel",
-                "isVisible": true,
-                "id": "flowmonadsdetectionmodel"
-              },
-              {
                 "fieldId": "incident_flowmonadspriority",
                 "isVisible": true,
-                "id": "flowmonadspriority"
+                "id": "flowmonadspriority",
+                "w": 1,
+                "h": 1
               },
               {
                 "fieldId": "incident_flowmonadsinterest",
                 "isVisible": true,
-                "id": "flowmonadsinterest"
+                "id": "flowmonadsinterest",
+                "w": 1,
+                "h": 1
               },
               {
-                "fieldId": "incident_flowmonadsperspectives",
+                "fieldId": "incident_flowmonadsdetectionmodel",
                 "isVisible": true,
-                "id": "flowmonadsperspectives"
+                "id": "flowmonadsdetectionmodel",
+                "w": 1,
+                "h": 1
+              },
+              {
+                "fieldId": "incident_flowmonadseventtype",
+                "isVisible": true,
+                "id": "flowmonadseventtype",
+                "w": 1,
+                "h": 1
+              },
+              {
+                "fieldId": "incident_flowmonadseventid",
+                "isVisible": true,
+                "id": "flowmonadseventid",
+                "w": 1,
+                "h": 1
+              },
+              {
+                "fieldId": "incident_flowmonadstechniques",
+                "isVisible": true,
+                "id": "flowmonadstechniques",
+                "w": 1,
+                "h": 1
               }
             ]
           }
@@ -79,23 +108,29 @@
         "name": "MITRE ATT&CK",
         "sections": [
           {
-            "name": "Techniques",
+            "name": "ATT&CK Techniques",
             "type": "custom",
             "items": [
               {
-                "fieldId": "incident_flowmonadstechniques",
-                "isVisible": true,
-                "id": "flowmonadstechniques"
-              },
-              {
                 "fieldId": "incident_mitreattcktechnique",
                 "isVisible": true,
-                "id": "mitreattcktechnique"
+                "id": "mitreattcktechnique",
+                "w": 2,
+                "h": 1
               },
               {
                 "fieldId": "incident_mitreattcktactic",
                 "isVisible": true,
-                "id": "mitreattcktactic"
+                "id": "mitreattcktactic",
+                "w": 2,
+                "h": 1
+              },
+              {
+                "fieldId": "incident_flowmonadstechniques",
+                "isVisible": true,
+                "id": "flowmonadstechniques",
+                "w": 2,
+                "h": 1
               }
             ]
           }
